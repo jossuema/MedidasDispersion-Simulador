@@ -20,16 +20,82 @@ const arrayHistograma = (data: RowData[]) => {
   })
 }
 
+const calcularRango = (data: RowData[]):number => {
+  return numeroMayor(data) - numeroMenor(data);
+}
+
+const numeroMenor = (data: RowData[]):number => {
+  let menor = Number(data[0].field1);
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    if (Number(row.field1) < menor) {
+      menor = Number(row.field1);
+    }
+  }
+  return menor;
+}
+
+const numeroMayor = (data: RowData[]):number => {
+  let mayor = Number(data[0].field2);
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    if (Number(row.field2) > mayor) {
+      mayor = Number(row.field2);
+    }
+  }
+  return mayor;
+}
+
+const calcularVarianza = (data: RowData[]):number => {
+  let suma = 0.0;
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const xi = ((Number(row.field1) + Number(row.field2))/2.0);
+    const fi = Number(row.field3);
+    suma += xi * fi;
+  }
+  console.log("Suma total xi * fi  "+suma);
+  
+  let n = 0.0;
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    n += Number(row.field3);
+  }
+  console.log("Suma total n  "+n);
+  const u = suma / n;
+  console.log("U: "+u);
+
+  suma = 0.0;
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const xi = ((Number(row.field1) + Number(row.field2))/2.0);
+    suma += (Math.pow((xi - u), 2)) * Number(row.field3); 
+  }
+  console.log("Suma total fi(xi - u)^2  "+suma);
+
+  return suma / n - 1;
+}
+
+const calcularDesviacion = (data: RowData[]):number => {
+  return Math.sqrt(calcularVarianza(data));
+}
+
 function App() {
   const [rows, setRows] = useState<number>(5);
   const [data, setData] = useState<RowData[]>([]);
   const [infoHistograma, setInfoHistograma] = useState<{intervalo: number;frecuencia: number}[]>([]);
+  const [rango, setRango] = useState<number>();
+  const [varianza, setVarianza] = useState<number>();
+  const [desviacion, setDesviacion] = useState<number>();
 
   const Graficar = () => {
     event?.preventDefault();
     if (validateData()) {
       const info = arrayHistograma(data);
       setInfoHistograma(info);
+      setRango(calcularRango(data));
+      setVarianza(calcularVarianza(data));
+      setDesviacion(calcularDesviacion(data));
       console.log(info);
     }
   }
@@ -68,7 +134,7 @@ function App() {
           <button onClick={Graficar} className="bg-green-700 text-white text-2xl font-medium w-full h-20 mt-auto">Graficar</button>
         </div>
       </div>
-      <div className="bg-slate-900 w-1/3 h-screen">
+      <div className="bg-slate-900 w-1/3 h-screen justify-center items-center flex">
         {(infoHistograma.length > 0) && <Histograma data={infoHistograma}/>}
       </div>
       <div className="bg-slate-800 w-1/3 h-screen flex flex-col">
@@ -76,9 +142,9 @@ function App() {
           <h1 className="text-7xl font-medium text-white">ESTADO</h1>
         </div>
         <div className="flex flex-col items-center justify-center">
-            <label className="text-white text-2xl">Rango:</label>
-            <label className="text-white text-2xl">Varianza:</label>
-            <label className="text-white text-2xl">Desviacion:</label>
+            <label className="text-white text-2xl">Rango: {rango}</label>
+            <label className="text-white text-2xl">Varianza: {varianza}</label>
+            <label className="text-white text-2xl">Desviacion: {desviacion}</label>
           </div>
       </div>
     </div>

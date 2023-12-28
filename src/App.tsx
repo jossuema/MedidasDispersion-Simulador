@@ -14,7 +14,7 @@ interface RowData {
 const arrayHistograma = (data: RowData[]) => {
   return data.map(row => {
     return {
-      "intervalo": ((Number(row.field2) - Number(row.field1))/2.0),
+      "intervalo": ((Number(row.field2) + Number(row.field1))/2.0),
       "frecuencia": Number(row.field3)
     }
   })
@@ -54,25 +54,18 @@ const calcularVarianza = (data: RowData[]):number => {
     const fi = Number(row.field3);
     suma += xi * fi;
   }
-  console.log("Suma total xi * fi  "+suma);
-  
   let n = 0.0;
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
     n += Number(row.field3);
   }
-  console.log("Suma total n  "+n);
   const u = suma / n;
-  console.log("U: "+u);
-
   suma = 0.0;
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
     const xi = ((Number(row.field1) + Number(row.field2))/2.0);
     suma += (Math.pow((xi - u), 2)) * Number(row.field3); 
   }
-  console.log("Suma total fi(xi - u)^2  "+suma);
-
   return suma / n - 1;
 }
 
@@ -96,7 +89,6 @@ function App() {
       setRango(calcularRango(data));
       setVarianza(calcularVarianza(data));
       setDesviacion(calcularDesviacion(data));
-      console.log(info);
     }
   }
 
@@ -120,24 +112,24 @@ function App() {
   }
 
   return (
-    <div className="bg-black h-screen flex flex-row">
-      <div className="bg-slate-800 w-1/3 h-screen flex flex-col justify-between">
+    <div className="bg-black md:h-screen flex flex-col md:flex-row">
+      <div className="bg-slate-800 md:w-1/3 md:h-screen flex flex-col justify-between">
         <div className="h-1/6 bg-green-700 flex justify-center items-center">
-          <h1 className="text-7xl font-medium text-white">SIMULADOR</h1>
+          <h1 className="text-6xl font-medium text-white">SIMULADOR</h1>
         </div>
         <div className=" bg-slate-900 flex flex- p-4 mb-auto">
           <label className="text-white text-2xl">Seleccione el numero de rangos</label>
           <Spinner initialValue={rows} min={0} max={8} step={1} onChange={setRows}/>
         </div>
         <Table rowsNumber={Array.from({ length: rows }, (_, index) => index + 1)} onData={setData}/>
-        <div>
+        <div className="pb-5 md:pb-0"> 
           <button onClick={Graficar} className="bg-green-700 text-white text-2xl font-medium w-full h-20 mt-auto">Graficar</button>
         </div>
       </div>
-      <div className="bg-slate-900 w-1/3 h-screen justify-center items-center flex">
+      <div className="bg-slate-900 md:w-1/3 md:h-screen justify-center items-center flex">
         {(infoHistograma.length > 0) && <Histograma data={infoHistograma}/>}
       </div>
-      <div className="bg-slate-800 w-1/3 h-screen flex flex-col">
+      <div className="bg-slate-800 md:w-1/3 md:h-screen flex flex-col">
         <div className="h-1/6 bg-green-700 flex justify-center items-center">
           <h1 className="text-7xl font-medium text-white">ESTADO</h1>
         </div>

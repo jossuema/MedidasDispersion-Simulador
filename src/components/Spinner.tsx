@@ -17,25 +17,36 @@ const Spinner: React.FC<SpinnerProps> = ({
 }) => {
   const [value, setValue] = useState(initialValue);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(event.target.value, 10);
-    if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-      setValue(newValue);
-      onChange(newValue);
+  const handleChange = (num: number) => {
+    if (num >= min && num <= max) {
+      setValue(num);
+      onChange(num);
     }
   };
 
   return (
-    <div className="mx-4 items-center justify-center">
+    <div className="mx-4 flex flex-row items-center justify-center">
+       <button
+        onClick={() => handleChange(value - step)}
+        className="px-3 py-1 text-lg border-2 border-gray-200 rounded-l-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 h-8 text-white focus:text-black transform transition duration-500"
+      >
+        -
+      </button>
       <input
         type="number"
         value={value}
-        onChange={handleChange}
-        className="w-16 text-center border-2 border-gray-200 rounded"
+        onChange={(e) => handleChange(Number(e.target.value))}
+        className="w-16 text-center border-2 border-gray-200 h-8"
         min={min}
         max={max}
         step={step}
       />
+      <button
+        onClick={() => handleChange(value + step)}
+        className="px-1 py-1 text-lg border-2 border-gray-200 rounded-r-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 h-8 text-white focus:text-black transform transition duration-500"
+      >
+        +
+      </button>
     </div>
   );
 };

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { RowData } from '../types/RowData';
 
-// Define la estructura de tus datos
-interface RowData {
-    id: number;
-    field1: string;
-    field2: string;
-    field3: string;
-}
-
+/**
+ * Añade filas a la matriz de datos basándose en los números de fila proporcionados.
+ * Si ya existe una fila con el mismo id en la matriz de datos, se devuelve tal cual.
+ * De lo contrario, se crea una nueva fila con el id proporcionado y los valores de campo vacíos.
+ * 
+ * @param rowsNumber - Una matriz de números de fila para añadir.
+ * @param data - La matriz de datos existente.
+ * @returns El array de datos actualizado con las filas añadidas.
+ */
 function addRows(rowsNumber: number[], data:RowData[]):RowData[]{
     return rowsNumber.map((rowNumber) => {
         const existingRow = data.find((d) => d.id === rowNumber);
@@ -16,40 +18,71 @@ function addRows(rowsNumber: number[], data:RowData[]):RowData[]{
         } else {
           return {
             id: rowNumber,
-            field1: '',
-            field2: '',
-            field3: '',
+            intervaloInicio: '',
+            intervaloFin: '',
+            frecuencia: '',
           };
         }
       });
-}
+};
 
+/**
+ * Parametros para el componente Tabla.
+ */
 type TableProps = {
-    rowsNumber: number[];
-    onData: (data: RowData[]) => void;
-}
+  /**
+   * Una matriz que representa el número de filas de la tabla.
+   */
+  rowsNumber: number[];
 
+  /**
+   * Una función callback que se llama cuando se actualizan los datos.
+   * @param data - An array of row data.
+   */
+  onData: (data: RowData[]) => void;
+};
+
+/**
+ * Represents el componente de una tabla.
+ * @param {TableProps} props - Parametros del componente.
+ * @param {number} props.rowsNumber - Numero de registros/filas en la tabla.
+ * @param {Function} props.onData - La funcion callback que se llama cuando se actualizan los datos.
+ * @returns {JSX.Element} The table component.
+ */
 const Table: React.FC<TableProps> = ({rowsNumber, onData}) => {
     const [rows, setRows] = useState<RowData[]>(addRows(rowsNumber, []));
 
+    /**
+     * useEffect hook que se ejecuta cuando cambia el número de filas.
+     * @param {number} rowsNumber - El número de filas.
+     * @param {Array<any>} rows - Filas actuales.
+     */
     useEffect(() => {
-        setRows(addRows(rowsNumber, rows));
+      setRows(addRows(rowsNumber, rows));
     }, [rowsNumber]);
 
+    /**
+     * Elimina la fila correspondiente del array de datos y llama a la función de callback onData.
+     * Actualiza el array de datos con la nueva fila.
+     * 
+     * @param content - The new content for the field.
+     * @param id - The id of the row.
+     * @param field - The field to be updated.
+     */
     const handleOnChange = (content: string, id: number, field: keyof RowData) => {
-        event?.preventDefault();
-        const newRows = rows.map(row => {
+      event?.preventDefault();
+      const newRows = rows.map(row => {
         if (row.id === id) {
-            return { ...row, [field]: content};
+          return { ...row, [field]: content};
         }
         return row;
-        });
-        setRows(newRows);
-        onData(newRows);
+      });
+      setRows(newRows);
+      onData(newRows);
     };
 
   return (
-    <div className="container mx-auto p-5 mt-auto">
+    <div className="container mx-auto p-5 mt-auto h-3/4 overflow-auto">
       <table className="table-auto w-full">
         <thead>
           <tr className="bg-gray-100">
@@ -64,24 +97,24 @@ const Table: React.FC<TableProps> = ({rowsNumber, onData}) => {
                     <td className="border px-4 py-2">
                         <input
                         type="text"
-                        value={row.field1}
-                        onChange={(e) => handleOnChange(e.target.value, row.id, 'field1')}
+                        value={row.intervaloInicio}
+                        onChange={(e) => handleOnChange(e.target.value, row.id, 'intervaloInicio')}
                         className="w-full px-2 py-1"
                         />
                     </td>
                     <td className="border px-4 py-2">
                         <input
                         type="text"
-                        value={row.field2}
-                        onChange={(e) => handleOnChange(e.target.value, row.id, 'field2')}
+                        value={row.intervaloFin}
+                        onChange={(e) => handleOnChange(e.target.value, row.id, 'intervaloFin')}
                         className="w-full px-2 py-1"
                         />
                     </td>
                     <td className="border px-4 py-2">
                         <input
                         type="text"
-                        value={row.field3}
-                        onChange={(e) => handleOnChange(e.target.value, row.id, 'field3')}
+                        value={row.frecuencia}
+                        onChange={(e) => handleOnChange(e.target.value, row.id, 'frecuencia')}
                         className="w-full px-2 py-1"
                         />
                     </td>

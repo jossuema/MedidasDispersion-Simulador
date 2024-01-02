@@ -1,13 +1,24 @@
 import { FC } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, XAxis, YAxis, Tooltip } from 'recharts';
 
+/**
+ * Parametros del componente Histograma.
+ */
 type HistogramaProps = {
-    data: {
-        intervalo: number;
-        frecuencia: number;
-    }[]
+  data: {
+    intervalo: number;
+    frecuencia: number;
+  }[]
 }
 
+/**
+ * Renderiza un componente de gráfico de histograma.
+ *
+ * @component
+ * @param {HistogramaProps} props - Parametros del componente Histograma.
+ * @param {Array<Object>} props.data - Los datos para el gráfico de histograma.
+ * @returns {JSX.Element} El componente Histograma renderizado.
+ */
 const Histograma: FC<HistogramaProps> = ({data}) => {
   return (
     <BarChart
